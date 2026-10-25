@@ -1,0 +1,13 @@
+.git
+.github
+data
+secrets
+config.yaml
+.env*
+bin
+coverage
+coverage.out
+reports
+*.pem
+*.key
+*.db*

@@ -43,6 +43,8 @@
 
 当前 joinSessionTTL 为 30 秒。hasJoined 从 serverId 找到主站 session，再读取 token 对应角色。网关不得自行延长 session 或仅根据“上次登录成功”构造 hasJoined。
 
+当前网关额外以 25 秒内存来源关联约束出口，并向主站 /authserver/validate 复核原进服 token；重启丢弃此短期 token。目标账号需要正常的 Yggdrasil validate 权限。主站 hasJoined 失败可能转入 fallback，因此不能只凭返回 UUID 与本地角色相同就重签。
+
 当前 HTTP Join 把 req.RemoteAddr 交给主站 service；当前 HasJoined service 不接收 ip 参数。代理后的 RemoteAddr 可能是网关地址，不能声称保留了原始客户端 IP 校验。若真实中心或目标服务器要求 ip 语义，应单独设计可信转发或网关约束并补测试。
 
 主站 profile 查询 handler 可能包含 fallback 或外部资料解析。实现前逐路由核对，不能因为成功返回 profile 就认定它是当前成员本地账号。全站本地角色索引及权威回查用于约束出口重签。
@@ -54,7 +56,7 @@
 | 全量本地角色 | GET /v2/admin/profiles?limit=100&cursor=... | 服务应用 profile.read.any；读取 items、has_next、next_cursor |
 | 当前用户信息 | GET /v2/users/me | 后续用户委托按实际权限；首阶段无需用户网页授权 |
 | 当前用户角色 | GET /v2/users/me/profiles | 后续绑定功能使用 profile.read.owned |
-| 角色名回查 | GET /v2/minecraft/profiles/{id} | 当前需 minecraft_profile.read.public；返回角色仍需核对本地归属 |
+| 角色名回查的另一主站能力 | GET /v2/minecraft/profiles/{id} | 需要 minecraft_profile.read.public；当前网关不使用此接口，统一从管理列表回查 |
 | Webhook 事件目录 | GET /v2/oauth/webhook-events | 读取实际可订阅权限，不能维护猜测目录 |
 | 服务 token | POST /oauth/token | Client Credentials，使用申请且已获准的 app-only 权限 |
 
@@ -76,7 +78,8 @@ cursor 是请求参数，next_cursor 是响应字段，不可互换。全部分�
 | 全量和增量同步 | 网关 worker 与 service app | 必须 |
 | 任意 UUID 重映射 API | 首阶段不调用；未来可用网关映射 | 无冲突角色不阻塞，不能假装支持 remap |
 | Union OAuth 用户链路 | 后续独立适配 | 首阶段不包含 |
-| 联合黑名单、queryemail | 准入要求待确认 | 若中心强制要求，必须实现后再验收 |
+| queryemail | 网关已提供显式开关，默认关闭 | 开启前明确授权向中心提供邮箱 |
+| 联合黑名单管理 | 首阶段不包含 | 若中心强制要求，明确契约后实现再验收 |
 
 ## 不修改主站的边界
 

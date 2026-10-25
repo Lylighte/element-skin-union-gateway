@@ -3,8 +3,8 @@
 ## 范围和架构
 
 - 本仓库是新的 Element Skin Union 网关；已归档的 elementskin-union-svc 仅作为历史参考，不整体复制。
-- 先阅读 README.md、doc/网关实现方案.md 和 doc/协议证据与待验证项.md。当前阶段只初始化文档，后续实现按里程碑推进。
-- 计划使用 Go 1.26、net/http；先实现 Element Skin 适配器，再按实际需要抽象其他皮肤站能力。不引入重量级框架或空泛的插件框架。
+- 先阅读 README.md、doc/网关实现方案.md、doc/部署与运维.md 和 doc/协议证据与待验证项.md。运行实现及离线验收不能代替远端真实 Union 验收。
+- 使用 Go 1.26、net/http；先实现 Element Skin 适配器，再按实际需要抽象其他皮肤站能力。不引入重量级框架或空泛的插件框架。
 - 路由层处理 HTTP，service 层处理业务与权限，adapter 层调用目标皮肤站，store 层管理持久化。跨 store 状态变更由 service 协调。
 - 认证、封禁与角色归属以目标皮肤站为权威。网关不得把资料查询成功当成进服验证成功，不单独创建可绕过上游授权的账号会话。
 - Union 密钥只由网关管理，不直接读写 Element Skin 数据库、Redis 或密钥文件。

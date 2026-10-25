@@ -1,0 +1,44 @@
+name: check and package
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Formatting
+        run: test -z "$(gofmt -l cmd internal)"
+      - run: go vet ./...
+      - name: Tests and coverage
+        run: |
+          go test -p 2 -count=1 -coverpkg=./... -covermode=atomic -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out | tee coverage.txt
+          awk '/^total:/ {if ($3+0 < 90) exit 1}' coverage.txt
+      - run: go test -race -p 2 ./...
+      - name: Static Linux executable
+        run: |
+          mkdir -p bin
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o bin/union-gateway ./cmd/union-gateway
+      - name: Offline Docker package
+        run: python scripts/package.py --binary bin/union-gateway --output dist
+      - name: Container checks
+        run: python scripts/smoke.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: union-gateway-docker
+          path: |
+            dist/*-docker.zip
+            dist/*.sha256
+            coverage.txt

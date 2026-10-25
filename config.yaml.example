@@ -1,0 +1,21 @@
+# Copy to config.yaml. Paths are relative to this file. Never commit real secrets.
+listen: "0.0.0.0:8267"
+public_root: "https://union.example.org"
+site_name: "Element Skin Union"
+elementskin_api_url: "http://element-skin:8080"
+elementskin_site_url: "https://skin.example.org"
+service_client_id: ""
+service_client_secret_file: "./secrets/client-secret"
+admin_token_file: "./secrets/admin-token"
+# May be empty before the Hub sends a signed updatebackendkey callback.
+member_key_file: ""
+# Optional: obtain signing_secret from the Element Skin webhook endpoint.
+webhook_secret_file: ""
+state_path: "./data/gateway.db"
+secret_dir: "./data/secrets"
+skin_domains: []
+timeout_seconds: 8
+sync_interval_seconds: 300
+service_scope: "profile.read.any"
+# Explicit authorization to answer signed Hub queries for account email.
+enable_query_email: false
