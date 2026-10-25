@@ -1,0 +1,35 @@
+# Local configuration, credentials and runtime state
+/config.yaml
+/config.local.*
+/.env
+/.env.*
+!/.env.example
+/data/
+/secrets/
+/logs/
+*.pem
+*.key
+*.p12
+*.pfx
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.log
+
+# Local builds and test output
+/bin/
+/dist/
+/coverage/
+coverage.out
+*.test
+*.exe
+__pycache__/
+*.pyc
+
+# Editor and operating system files
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Union 皮肤站适配"
+  short_description: "为不同架构的皮肤站设计并实现 Union 联合认证适配和进服验证"
+  default_prompt: "使用 $union-skill 检查当前皮肤站能力，实现 Union 适配并验证联合进服。"
